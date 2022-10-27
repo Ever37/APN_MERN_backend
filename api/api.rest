@@ -1,0 +1,89 @@
+## https://github.com/Huachao/vscode-restclient
+## https://stackoverflow.com/questions/62658941/error-write-eproto-34557064error100000f7ssl-routinesopenssl-internalwrong
+@urlhost = http://localhost:4000/api
+
+### AUTENTICAR USUARIO
+# @name login
+POST {{urlhost}}/veterinarios/login HTTP/1.1
+content-type: application/json
+Accept: application/json
+
+{
+  "email": "everblua@gmail.com",
+  "password": "password"
+}
+
+###
+@jwt = {{ login.response.body.token }}
+
+### OBTENER EL PERFIL DE VETERINARIO
+GET {{urlhost}}/veterinarios/perfil
+Authorization: Bearer {{jwt}}
+
+### REGISTRAR VETERINARIO
+POST {{urlhost}}/veterinarios HTTP/1.1
+content-type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+  "nombre": "Juan",
+  "password": "password",
+  "email": "everblua@gmail.com"
+}
+
+### CONFIRMAR UNA CUENTA VIA TOKEN
+GET {{urlhost}}/veterinarios/confirmar/1gg4vfhujlrcmblgcbdo
+Authorization: Bearer {{jwt}}
+
+### RESETEAR EMAIL - COMPROBAR SI USUARIO EXISTE Y GENERAR TOKEN
+POST {{urlhost}}/veterinarios/olvide-password HTTP/1.1
+content-type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+  "email": "mail@gmail.com",
+}
+
+### VALIDAR EL TOKEN CUANDO EL USUARIO CAMBIO SU PASSWORD
+GET {{urlhost}}/veterinarios/olvide-password/1gg3cm8vcknueceirq38 HTTP/1.1
+Authorization: Bearer {{jwt}}
+
+### ALMACENAR UN NUEVO PASSWORD
+POST {{urlhost}}/veterinarios/olvide-password/1gg3cm8vcknueceirq38 HTTP/1.1
+content-type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+  "password": "nuevoPassword"
+}
+
+### REGISTRAR PACIENTE
+POST {{urlhost}}/pacientes HTTP/1.1
+content-type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+  "nombre": "Pepi",
+  "propietario": "Ever",
+  "email": "everblua@gmail.com",
+  "sintomas": "No quiere tomar agua"
+}
+
+### OBTIENE PACIENTES
+GET {{urlhost}}/pacientes
+Authorization: Bearer {{jwt}}
+
+### ACTUALIZAR PACIENTE
+@id = 635686f8dd6b5e55c5c99fd7
+PUT {{urlhost}}/pacientes/{{id}} HTTP/1.1
+content-type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+  "nombre": "Julian"
+}
+
+### ELIMINAR PACIENTE
+@id = 635686f8dd6b5e55c5c99fd7
+DELETE {{urlhost}}/pacientes/{{id}}
+Authorization: Bearer {{jwt}}
